@@ -1,6 +1,6 @@
 // Dane do połączenia z Twoim projektem Supabase
 const supabaseUrl = 'https://zmwnvciqxphttbcunxa.supabase.co';
-const supabaseKey = 'sb_publishable_3F-Hr9mWKyPrwiD7-fzw0A_r3SeGW2v';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptd252Y2lxeHNwaHR0YmN1bnhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzI1MTEsImV4cCI6MjA4NTcwODUxMX0.r-G2ErhDltI6gykt4TrSsndWuEONUNaQCu4mh88dAm0';
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 const regForm = document.getElementById('registration-form');

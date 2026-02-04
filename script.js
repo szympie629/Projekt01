@@ -1,5 +1,5 @@
 // Dane do połączenia z Twoim projektem Supabase
-const supabaseUrl = 'https://zmwnvciqxphttbcunxa.supabase.co';
+const supabaseUrl = 'https://zmwnvciqxsphttbcunxa.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptd252Y2lxeHNwaHR0YmN1bnhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzI1MTEsImV4cCI6MjA4NTcwODUxMX0.r-G2ErhDltI6gykt4TrSsndWuEONUNaQCu4mh88dAm0';
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 

@@ -15,8 +15,23 @@
     <div id="registration-container">
         <h2>Formularz rejestracyjny</h2>
         <form id="registration-form">
-            <input type="text" id="username" placeholder="Login" required><br><br>
-            <input type="password" id="password" placeholder="Hasło" required><br><br>
+            <input type="text" id="firstName" placeholder="Imię" required>
+            
+            <input type="text" id="lastName" placeholder="Nazwisko" required>
+            
+            <input type="text" id="username" placeholder="Login (opcjonalny)">
+            
+            <input type="email" id="email" placeholder="Adres Email" required>
+            
+            <input type="tel" id="phone" placeholder="Numer telefonu (opcjonalny)">
+            
+            <input type="password" id="password" placeholder="Hasło" required>
+            
+            <input type="password" id="confirmPassword" placeholder="Powtórz hasło" required>
+
+            <div id="password-toggle-container"></div> 
+
+            <br>
             <button type="submit">Zarejestruj mnie</button>
         </form>
         <p id="message"></p>

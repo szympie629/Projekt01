@@ -23,3 +23,34 @@ input {
     padding: 8px;
     width: 200px;
 }
+
+/* Ukrywamy systemowe "oczko" w Edge/IE */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+/* Kontener, który pozwoli nam nałożyć ikonkę na pole hasła */
+.password-wrapper {
+    position: relative;
+    width: 200px; /* Musi być taka sama szerokość jak input */
+    margin-bottom: 10px;
+}
+
+/* Stylizacja naszego pola input wewnątrz kontenera */
+.password-wrapper input {
+    width: 100%; /* Wypełnia cały kontener */
+    box-sizing: border-box; /* Dzięki temu padding nie psuje szerokości */
+    margin-bottom: 0; /* Margines przejmuje kontener */
+}
+
+/* Nasze własne "oczko" */
+.toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2em;
+    user-select: none; /* Żeby nie zaznaczać tekstu przy klikaniu */
+}

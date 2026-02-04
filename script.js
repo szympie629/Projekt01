@@ -6,26 +6,22 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 const regForm = document.getElementById('registration-form');
 const message = document.getElementById('message');
 
-// --- NOWOŚĆ: Obsługa własnego "oczka" (zamiast checkboxa) ---
+// --- Obsługa własnego "oczka" ---
 const toggleBtn = document.getElementById('toggle-btn');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 
-// Nasłuchujemy kliknięcia w IKONKĘ (span), a nie zmiany checkboxa
+// Nasłuchujemy kliknięcia w IKONKĘ (span)
 toggleBtn.addEventListener('click', () => {
     // Sprawdzamy, czy hasło jest obecnie ukryte
     const isPassword = passwordInput.type === 'password';
     
-    // Jeśli było ukryte, zmieniamy na tekst. Jeśli było tekstem, na hasło.
+    // Zmieniamy typ pola
     const newType = isPassword ? 'text' : 'password';
-    
-    // Zmieniamy OBA pola naraz
     passwordInput.type = newType;
     confirmPasswordInput.type = newType;
 
-    // Zmieniamy ikonkę: 
-    // Jeśli pokazaliśmy hasło (newType === 'text'), pokazujemy małpkę 🙈 (lub przekreślone oko)
-    // Jeśli ukryliśmy (newType === 'password'), pokazujemy zwykłe oko 👁️
+    // Zmieniamy ikonkę
     toggleBtn.innerText = isPassword ? '🙈' : '👁️';
 });
 
@@ -46,11 +42,10 @@ regForm.addEventListener('submit', async (e) => {
     if (pass !== confirmPass) {
         message.innerText = "Błąd: Hasła nie są identyczne!";
         message.style.color = "red";
-        return; // Zatrzymujemy funkcję, nie wysyłamy danych
+        return; 
     }
 
     // 2. Jeśli hasła są OK, wysyłamy komplet danych do Supabase
-    // Upewnij się, że w bazie dodałeś kolumny: first_name, last_name, email, phone
     const { data, error } = await _supabase
         .from('users')
         .insert([{ 
@@ -69,10 +64,11 @@ regForm.addEventListener('submit', async (e) => {
         message.innerText = "Rejestracja zakończona pomyślnie!";
         message.style.color = "green";
         regForm.reset(); 
-        // Odznaczamy też checkbox pokazywania hasła po resecie
-        togglePassword.checked = false;
+        
+        // POPRAWKA: Prawidłowe resetowanie po wysłaniu
         passwordInput.type = 'password';
         confirmPasswordInput.type = 'password';
+        toggleBtn.innerText = '👁️';
     }
 });
 

@@ -6,16 +6,27 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 const regForm = document.getElementById('registration-form');
 const message = document.getElementById('message');
 
-// --- NOWOŚĆ: Obsługa przycisku "Pokaż hasło" ---
-const togglePassword = document.getElementById('toggle-password');
+// --- NOWOŚĆ: Obsługa własnego "oczka" (zamiast checkboxa) ---
+const toggleBtn = document.getElementById('toggle-btn');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 
-togglePassword.addEventListener('change', () => {
-    // Jeśli checkbox jest zaznaczony, pokaż tekst, w przeciwnym razie kropki
-    const type = togglePassword.checked ? 'text' : 'password';
-    passwordInput.type = type;
-    confirmPasswordInput.type = type;
+// Nasłuchujemy kliknięcia w IKONKĘ (span), a nie zmiany checkboxa
+toggleBtn.addEventListener('click', () => {
+    // Sprawdzamy, czy hasło jest obecnie ukryte
+    const isPassword = passwordInput.type === 'password';
+    
+    // Jeśli było ukryte, zmieniamy na tekst. Jeśli było tekstem, na hasło.
+    const newType = isPassword ? 'text' : 'password';
+    
+    // Zmieniamy OBA pola naraz
+    passwordInput.type = newType;
+    confirmPasswordInput.type = newType;
+
+    // Zmieniamy ikonkę: 
+    // Jeśli pokazaliśmy hasło (newType === 'text'), pokazujemy małpkę 🙈 (lub przekreślone oko)
+    // Jeśli ukryliśmy (newType === 'password'), pokazujemy zwykłe oko 👁️
+    toggleBtn.innerText = isPassword ? '🙈' : '👁️';
 });
 
 // --- Obsługa wysyłania formularza ---

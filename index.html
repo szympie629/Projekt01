@@ -47,10 +47,19 @@
 
     <div id="dashboard-container" style="display: none; margin-top: 20px; text-align: center;">
         <h2>Status Maszyny CNC-01</h2>
+        <div style="text-align: right; margin-bottom: 10px;">
+            <button id="logout-btn" style="background-color: #6c757d; font-size: 0.8em; padding: 5px 10px; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Wyloguj
+            </button>
+        </div>
         <div id="status-indicator" style="padding: 20px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; background-color: #ddd;">
             OCZEKIWANIE NA DANE...
         </div>
         <div style="display: flex; gap: 20px; justify-content: center;">
+            <div class="stat-box">
+                <p>Jakość <br>(%):</p>
+                <h3 id="quality-percent">100%</h3>
+            </div>
             <div class="stat-box">
                 <p>Suma sztuk:</p>
                 <h3 id="pieces-count">0</h3>

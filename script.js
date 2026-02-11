@@ -1,3 +1,5 @@
+let dashboardInterval;
+
 // Dane do połączenia z Twoim projektem Supabase
 const supabaseUrl = 'https://zmwnvciqxsphttbcunxa.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptd252Y2lxeHNwaHR0YmN1bnhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzI1MTEsImV4cCI6MjA4NTcwODUxMX0.r-G2ErhDltI6gykt4TrSsndWuEONUNaQCu4mh88dAm0';
@@ -105,7 +107,8 @@ regForm.addEventListener('submit', async (e) => {
 // --- 4. Logika Dashboardu (zamykamy w funkcji) ---
 
 function startDashboardUpdates() {
-    setInterval(fetchMachineData, 3000);
+    // Przypisujemy interwał do zmiennej, aby móc go później wyczyścić
+    dashboardInterval = setInterval(fetchMachineData, 3000);
     fetchMachineData();
 }
 
@@ -118,11 +121,22 @@ async function fetchMachineData() {
         .single();
 
     if (data) {
-        document.getElementById('pieces-count').innerText = data.pieces_total;
-        document.getElementById('scrap-count').innerText = data.scrap_total;
+        const pieces = data.pieces_total;
+        const scrap = data.scrap_total;
+
+        document.getElementById('pieces-count').innerText = pieces;
+        document.getElementById('scrap-count').innerText = scrap;
+
+        // --- Obliczanie jakości ---
+        let quality = 100;
+        if (pieces > 0) {
+            quality = (((pieces - scrap) / pieces) * 100).toFixed(1);
+        }
+        document.getElementById('quality-percent').innerText = quality + "%";
+        // -------------------------
+
         const indicator = document.getElementById('status-indicator');
         indicator.innerText = data.status;
-        
         indicator.classList.remove('status-produkcja', 'status-awaria', 'status-naprawa');
         if (data.status === 'PRODUKCJA') indicator.classList.add('status-produkcja');
         else if (data.status === 'AWARIA' || data.status === 'NAPRAWA') indicator.classList.add('status-naprawa');
@@ -136,4 +150,19 @@ document.getElementById('toggle-btn').addEventListener('click', () => {
     passInput.type = isPass ? 'text' : 'password';
     document.getElementById('confirmPassword').type = isPass ? 'text' : 'password';
     document.getElementById('toggle-btn').innerText = isPass ? '🙈' : '👁️';
+});
+
+const logoutBtn = document.getElementById('logout-btn');
+
+logoutBtn.addEventListener('click', () => {
+    // 1. Zatrzymujemy zegar pobierania danych
+    clearInterval(dashboardInterval);
+    
+    // 2. Przełączamy widoczność paneli
+    dashboardContainer.style.display = 'none';
+    authButtons.style.display = 'block';
+    
+    // 3. Komunikat dla użytkownika
+    message.innerText = "Wylogowano pomyślnie.";
+    message.style.color = "blue";
 });

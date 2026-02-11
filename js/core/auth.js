@@ -35,12 +35,33 @@ if (loginForm) {
             msgBox.innerText = "Błąd: Nieprawidłowy login lub hasło.";
             msgBox.style.color = "red";
         } else {
-            msgBox.innerText = `Witaj ${data.first_name}! Przekierowanie...`;
+            msgBox.innerText = `Witaj ${data.first_name}! (${data.role}) Przekierowanie...`;
             msgBox.style.color = "green";
 
-            // ZMIANA: Zamiast pokazywać dashboard tutaj, przenosimy do pliku operatora
+            // 1. Zapisz dane sesji (potrzebne do zabezpieczenia panelu admina)
+            sessionStorage.setItem('user_role', data.role);
+            sessionStorage.setItem('user_name', data.username);
+
+            // 2. Inteligentne przekierowanie
             setTimeout(() => {
-                window.location.href = 'pages/operator.html';
+                switch (data.role) {
+                    case 'admin':
+                        window.location.href = 'pages/admin.html';
+                        break;
+                    case 'maintenance':
+                        // Tego pliku jeszcze nie ma, stworzymy go zaraz!
+                        window.location.href = 'pages/maintenance.html';
+                        break;
+                    case 'manager':
+                        // Tego pliku też jeszcze nie ma
+                        window.location.href = 'pages/manager.html';
+                        break;
+                    case 'operator':
+                    default:
+                        // Domyślny widok dla operatora i nieznanych ról
+                        window.location.href = 'pages/operator.html';
+                        break;
+                }
             }, 1000);
         }
     });

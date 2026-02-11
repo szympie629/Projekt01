@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administratora</title>
+
+    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const role = sessionStorage.getItem('user_role');
+        if (role !== 'admin') {
+            alert("⛔ Brak uprawnień! Przekierowanie...");
+            window.location.href = '../index.html';
+        }
+    </script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1>🛡️ Panel Administratora</h1>
+        </div>
+        <button class="logout-btn" onclick="window.location.href='../index.html'">
+            Wyloguj
+        </button>
+    </nav>
+
+    <div class="admin-container">
+        <h2 class="admin-header">Zarządzanie Użytkownikami</h2>
+        
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Login</th>
+                    <th>Imię i Nazwisko</th>
+                    <th>Email</th>
+                    <th style="width: 150px;">Rola</th>
+                    <th style="width: 100px;">Akcja</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body">
+                <tr>
+                    <td colspan="5" style="text-align: center;">Ładowanie danych...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="../js/core/config.js"></script>
+    <script src="../js/modules/admin.js"></script> 
+
+    <script>
+        // Start logiki po załadowaniu DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.initAdminPanel === 'function') {
+                window.initAdminPanel();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -54,3 +54,63 @@ input::-ms-clear {
     font-size: 1.2em;
     user-select: none; /* Żeby nie zaznaczać tekstu przy klikaniu */
 }
+
+/* --- STYLIZACJA DASHBOARDU OPERATORA --- */
+
+#dashboard-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 400px;
+    text-align: center;
+}
+
+/* Wskaźnik statusu - bazowy wygląd */
+#status-indicator {
+    transition: background-color 0.5s ease; /* Płynna zmiana kolorów */
+    font-size: 1.2em;
+    letter-spacing: 1px;
+    border: 1px solid #ccc;
+}
+
+/* Karty statystyk (Licznik sztuk i Braki) */
+.stat-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    flex: 1; /* Pudełka będą tej samej szerokości */
+}
+
+.stat-box p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+.stat-box h3 {
+    margin: 10px 0 0 0;
+    font-size: 1.8em;
+    color: #212529;
+}
+
+/* Klasy pomocnicze dla statusów (użyjemy ich w JS) */
+.status-produkcja {
+    background-color: #28a745 !important;
+    color: white;
+    border-color: #1e7e34 !important;
+}
+
+.status-awaria {
+    background-color: #dc3545 !important;
+    color: white;
+    border-color: #bd2130 !important;
+}
+
+.status-naprawa {
+    background-color: #ffc107 !important;
+    color: #212529;
+    border-color: #e0a800 !important;
+}

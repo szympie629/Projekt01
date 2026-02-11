@@ -2,24 +2,35 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Moja Strona Rejestracji</title>
+    <title>Micro-MES: Panel Maszyny</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <h1>Witaj na naszej stronie!</h1>
+    <h1>Micro-MES Portal</h1>
     
-    <button id="show-form-btn">Rejestracja</button>
+    <div id="auth-buttons">
+        <button id="show-login-btn">Logowanie</button>
+        <button id="show-reg-btn">Rejestracja</button>
+    </div>
 
-    <div id="registration-container">
-        <h2>Formularz rejestracyjny</h2>
+    <div id="login-container" style="display: none; margin-top: 20px;">
+        <h2>Zaloguj się</h2>
+        <form id="login-form">
+            <input type="text" id="login-username" placeholder="Login" required>
+            <input type="password" id="login-password" placeholder="Hasło" required>
+            <button type="submit">Wejdź do systemu</button>
+        </form>
+    </div>
+
+    <div id="registration-container" style="display: none; margin-top: 20px;">
+        <h2>Stwórz konto operatora</h2>
         <form id="registration-form">
             <input type="text" id="firstName" placeholder="Imię" required>
             <input type="text" id="lastName" placeholder="Nazwisko" required>
             <input type="text" id="username" placeholder="Login" required>
             <input type="email" id="email" placeholder="Adres Email" required>
-            <input type="tel" id="phone" placeholder="Numer telefonu (opcjonalny)">
             
             <div class="password-wrapper">
                 <input type="password" id="password" placeholder="Hasło" required>
@@ -27,13 +38,30 @@
             </div>
             
             <input type="password" id="confirmPassword" placeholder="Powtórz hasło" required>
-
             <br>
             <button type="submit">Zarejestruj mnie</button>
         </form>
-        <p id="message"></p>
+    </div>
+
+    <p id="message"></p>
+
+    <div id="dashboard-container" style="display: none; margin-top: 20px; text-align: center;">
+        <h2>Status Maszyny CNC-01</h2>
+        <div id="status-indicator" style="padding: 20px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; background-color: #ddd;">
+            OCZEKIWANIE NA DANE...
+        </div>
+        <div style="display: flex; gap: 20px; justify-content: center;">
+            <div class="stat-box">
+                <p>Suma sztuk:</p>
+                <h3 id="pieces-count">0</h3>
+            </div>
+            <div class="stat-box">
+                <p>Braki (NOK):</p>
+                <h3 id="scrap-count">0</h3>
+            </div>
+        </div>
     </div>
     
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>

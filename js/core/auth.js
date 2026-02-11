@@ -40,7 +40,7 @@ if (loginForm) {
 
             // 1. Zapisz dane sesji (potrzebne do zabezpieczenia panelu admina)
             sessionStorage.setItem('user_role', data.role);
-            sessionStorage.setItem('user_name', data.username);
+            sessionStorage.setItem('user_name', `${data.first_name} ${data.last_name}`);
 
             // 2. Inteligentne przekierowanie
             setTimeout(() => {

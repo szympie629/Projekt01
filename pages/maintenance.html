@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utrzymanie Ruchu | Micro-MES</title>
+
+    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/maintenance.css">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        const role = sessionStorage.getItem('user_role');
+        const allowedRoles = ['maintenance', 'admin'];
+        if (!allowedRoles.includes(role)) {
+            alert("⛔ Brak uprawnień do panelu technicznego!");
+            window.location.href = '../index.html';
+        }
+    </script>
+</head>
+<body>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <i class="ph ph-nut"></i> </div>
+            <span class="logo-text">Micro-MES</span>
+            
+            <div class="toggle-btn" id="sidebar-toggle">
+                <i class="ph ph-caret-left"></i>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li class="active" onclick="switchTab('tab-overview', this)">
+                <a href="#">
+                    <i class="ph ph-gauge"></i>
+                    <span class="text">Przegląd</span>
+                </a>
+            </li>
+
+            <li onclick="switchTab('tab-logs', this)">
+                <a href="#">
+                    <i class="ph ph-clipboard-text"></i>
+                    <span class="text">Dziennik</span>
+                </a>
+            </li>
+
+            <li onclick="switchTab('tab-charts', this)">
+                <a href="#">
+                    <i class="ph ph-chart-line-up"></i>
+                    <span class="text">Analiza</span>
+                </a>
+            </li>
+
+            <li onclick="switchTab('tab-controls', this)">
+                <a href="#">
+                    <i class="ph ph-sliders"></i>
+                    <span class="text">Sterowanie</span>
+                </a>
+            </li>
+            
+            <li class="user-profile">
+                <div class="profile-wrapper">
+                    <i class="ph ph-user-circle"></i>
+                    <div class="user-info-text">
+                        <span class="name" id="sidebar-user-name">--</span>
+                        <span class="role-badge">Utrzymanie Ruchu</span>
+                    </div>
+                </div>
+            </li>
+
+            <li class="logout-item" onclick="window.location.href='../index.html'">
+                <a href="#">
+                    <i class="ph ph-sign-out"></i>
+                    <span class="text">Wyloguj</span>
+                </a>
+            </li>
+        </ul>
+        
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <header class="top-bar">
+            <h2 style="margin-top: 0; margin-bottom: 20px; color: #333;">Panel Utrzymania Ruchu</h2>
+        </header>
+
+        <div id="tab-overview" class="tab-content active-tab">
+            <h2 class="section-title">Status Czasu Rzeczywistego</h2>
+
+            <div class="kpi-container">
+                <div class="kpi-card red">
+                    <div class="kpi-icon"><i class="ph ph-warning-circle"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" id="kpi-alarms">0</span>
+                        <span class="kpi-label">Aktywne Awarie</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card orange">
+                    <div class="kpi-icon"><i class="ph ph-wrench"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" id="kpi-maintenance">0</span>
+                        <span class="kpi-label">W Naprawie</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card grey">
+                    <div class="kpi-icon"><i class="ph ph-plugs-connected"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-value" id="kpi-offline">0</span>
+                        <span class="kpi-label">Maszyny Offline</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">⚠️ Wymagają Uwagi</h3>
+            <div class="table-responsive">
+                <table class="maintenance-table">
+                    <thead>
+                        <tr>
+                            <th>Maszyna</th>
+                            <th>Status</th>
+                            <th>Kod Błędu</th>
+                            <th>Czas Trwania</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody id="live-issues-body">
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:#888;">
+                                Brak aktywnych awarii. Wszystkie systemy sprawne. ✅
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-logs" class="tab-content" style="display: none;">
+            <h3>Widok: Dziennik Zdarzeń</h3>
+            <p>Tutaj będzie tabela logów.</p>
+        </div>
+
+        <div id="tab-charts" class="tab-content" style="display: none;">
+            <h3>Widok: Wykresy</h3>
+            <p>Tutaj będą wykresy Chart.js.</p>
+        </div>
+
+        <div id="tab-controls" class="tab-content" style="display: none;">
+            <h3>Widok: Sterowanie</h3>
+            <p>Tutaj będą przyciski sterujące.</p>
+        </div>
+    </main>
+
+    <script src="../js/core/config.js"></script>
+    <script src="../js/modules/maintenance.js"></script> <script>
+        // Wyświetlenie loginu (zaktualizowane ID)
+        document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Inżynier';
+
+        // Logika zakładek (TABS)
+        function switchTab(tabId, navElement) {
+            // 1. Ukryj wszystkie treści
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            // 2. Pokaż wybraną treść
+            document.getElementById(tabId).style.display = 'block';
+            
+            // 3. Zaktualizuj klasę 'active' w menu
+            document.querySelectorAll('.menu-items li').forEach(el => el.classList.remove('active'));
+            navElement.classList.add('active');
+        }
+
+        // Logika zwijania Sidebara
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+
+            // Obrót strzałki
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
+            } else {
+                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
+            }
+        });
+    </script>
+
+</body>
+</html>

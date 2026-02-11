@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    background-color: #f0f2f5;
+    margin: 0;
+}

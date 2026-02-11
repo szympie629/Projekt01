@@ -1,58 +1,122 @@
-/* Główny kontener dashboardu */
-#dashboard-container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    width: 400px;
-    text-align: center;
+/* --- PASEK NAWIGACYJNY (NAVBAR) --- */
+.navbar {
+    width: 100%;
+    background-color: #343a40; /* Ciemny szary */
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between; /* Rozsuwa logo i przycisk */
+    align-items: center;
+    box-sizing: border-box;
+    position: fixed; /* Przyklejony do góry */
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
-/* Wskaźnik statusu */
-#status-indicator {
-    transition: background-color 0.5s ease;
-    font-size: 1.2em;
-    letter-spacing: 1px;
-    border: 1px solid #ccc;
-}
-
-/* Karty statystyk */
-.stat-box {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
-    flex: 1;
-}
-
-.stat-box p {
+.navbar h1 {
     margin: 0;
-    font-size: 0.9em;
-    color: #6c757d;
-    text-transform: uppercase;
+    font-size: 1.4em;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
-.stat-box h3 {
-    margin: 10px 0 0 0;
-    font-size: 1.8em;
-    color: #212529;
+/* Przycisk wylogowania w pasku */
+.logout-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* --- SIATKA MASZYN (GRID) --- */
+#machines-grid {
+    display: grid;
+    /* Automatyczne dopasowanie kolumn (min 300px szerokości) */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 25px;
+    padding: 100px 20px 40px 20px; /* Padding-top 100px, żeby nie wchodziło pod pasek */
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- KARTA MASZYNY (POJEDYNCZY KAFELEK) --- */
+.machine-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #f0f0f0;
+}
+
+.machine-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.machine-title {
+    margin-top: 0;
+    font-size: 1.3em;
+    color: #333;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Wskaźnik statusu wewnątrz karty */
+.status-indicator {
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    background-color: #e9ecef; /* Domyślny szary */
+    color: #495057;
 }
 
 /* Kolory statusów */
-.status-produkcja {
-    background-color: #28a745 !important;
-    color: white;
-    border-color: #1e7e34 !important;
+.status-produkcja { background-color: #28a745; color: white; }
+.status-awaria { background-color: #dc3545; color: white; }
+.status-naprawa { background-color: #ffc107; color: #212529; }
+.status-offline { background-color: #6c757d; color: white; }
+
+/* Statystyki w rzędzie */
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-.status-awaria {
-    background-color: #dc3545 !important;
-    color: white;
-    border-color: #bd2130 !important;
+.stat-item {
+    background-color: #f8f9fa;
+    padding: 10px 5px;
+    border-radius: 6px;
+    flex: 1;
 }
 
-.status-naprawa {
-    background-color: #ffc107 !important;
+.stat-item span {
+    display: block;
+    font-size: 0.75em;
+    color: #6c757d;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.stat-item strong {
+    font-size: 1.2em;
     color: #212529;
-    border-color: #e0a800 !important;
 }

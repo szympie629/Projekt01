@@ -3,92 +3,104 @@ import random
 import threading
 from supabase import create_client
 
-# Konfiguracja Supabase (Twoje dane)
+# Konfiguracja Supabase
 SUPABASE_URL = "https://zmwnvciqxsphttbcunxa.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptd252Y2lxeHNwaHR0YmN1bnhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzI1MTEsImV4cCI6MjA4NTcwODUxMX0.r-G2ErhDltI6gykt4TrSsndWuEONUNaQCu4mh88dAm0"
 
-# Inicjalizacja klienta (jedna instancja dla wszystkich wątków)
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# Lista maszyn do symulacji
 MACHINES = ["CNC-01", "CNC-02", "CNC-03", "CNC-04", "CNC-05", "CNC-06"]
 
 class MachineSimulator(threading.Thread):
     def __init__(self, machine_id):
         super().__init__()
         self.machine_id = machine_id
-        self.status = "PRODUKCJA"
         self.pieces = 0
         self.scrap = 0
+        self.status = "PRODUKCJA" 
         self.running = True
+        
+        # POPRAWKA: Każdy wątek ma SWOJEGO WŁASNEGO klienta.
+        # Dzięki temu awaria połączenia w jednym wątku nie zabija innych.
+        self.db_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    def sync_with_db(self):
+        """Pobiera ostatni znany stan maszyny z bazy."""
+        try:
+            # Używamy self.db_client zamiast globalnego supabase
+            response = self.db_client.table("machine_logs") \
+                .select("*") \
+                .eq("machine_id", self.machine_id) \
+                .order("created_at", desc=True) \
+                .limit(1) \
+                .execute()
+            
+            if response.data and len(response.data) > 0:
+                last_log = response.data[0]
+                self.status = last_log['status']
+                self.pieces = last_log['pieces_total']
+                self.scrap = last_log['scrap_total']
+                return True
+        except Exception as e:
+            # Wypisujemy błąd, ale nie przerywamy pętli
+            # print(f"⚠️ {self.machine_id}: Sync error (to normalne przy starcie): {e}")
+            return False
 
     def run(self):
-        print(f"🟢 Uruchamiam symulację dla: {self.machine_id}")
+        print(f"🟢 {self.machine_id}: Start symulacji...")
         
         while self.running:
-            # 1. LOGIKA SYMULACJI
+            # 1. SYNCHRONIZACJA
+            self.sync_with_db()
+
+            current_error_code = None
+
+            # 2. LOGIKA
             if self.status == "PRODUKCJA":
                 self.pieces += 1
+                if random.random() < 0.05: self.scrap += 1
                 
-                # 5% szans na brak
-                if random.random() < 0.05:
-                    self.scrap += 1
-                
-                # 2% szans na awarię (trochę rzadziej niż wcześniej, żeby nie wszystkie stały naraz)
                 if random.random() < 0.02:
                     self.status = "AWARIA"
-                    print(f"⚠️  {self.machine_id}: AWARIA!")
+                    current_error_code = random.choice(["E-STOP", "PRZEGRZANIE", "BRAK MATERIAŁU"])
+                    print(f"🔥 {self.machine_id}: AWARIA ({current_error_code})!")
 
             elif self.status == "AWARIA":
-                # 20% szans na reakcję serwisu
-                if random.random() < 0.2:
-                    self.status = "NAPRAWA"
-                    print(f"🛠️  {self.machine_id}: Serwis naprawia...")
+                current_error_code = "WYMAGA SERWISU"
 
             elif self.status == "NAPRAWA":
-                # 30% szans na naprawienie
-                if random.random() < 0.3:
-                    self.status = "PRODUKCJA"
-                    print(f"✅  {self.machine_id}: Powrót do pracy.")
+                current_error_code = "SERWIS W TOKU"
+                
+            elif self.status == "WYLACZONA":
+                current_error_code = "POSTÓJ PLANOWANY"
 
-            # 2. PRZYGOTOWANIE DANYCH
+            # 3. WYSYŁKA
             data = {
                 "machine_id": self.machine_id,
                 "status": self.status,
                 "pieces_total": self.pieces,
                 "scrap_total": self.scrap,
-                "error_code": "E-STOP" if self.status == "AWARIA" else None
+                "error_code": current_error_code
             }
 
-            # 3. WYSYŁKA DO BAZY
             try:
-                supabase.table("machine_logs").insert(data).execute()
-                # Logowanie w konsoli (tylko co jakiś czas lub przy zmianie statusu, żeby nie zaśmiecać)
-                # print(f"[{self.machine_id}] {self.status} | {self.pieces} szt.") 
+                # Używamy self.db_client
+                self.db_client.table("machine_logs").insert(data).execute()
             except Exception as e:
-                print(f"❌ Błąd wysyłki {self.machine_id}: {e}")
+                # Jeśli zerwie połączenie, po prostu spróbujemy za 3 sekundy, nie panikujemy.
+                print(f"⚠️ {self.machine_id}: Nie udało się wysłać logu (reconnecting...)")
 
-            # Symulacja cyklu (losowy czas 3-5 sekund, żeby maszyny nie szły idealnie równo)
-            time.sleep(random.uniform(3.0, 5.0))
-
-# --- GŁÓWNA PĘTLA URUCHAMIAJĄCA ---
+            time.sleep(random.uniform(3.0, 6.0))
 
 if __name__ == "__main__":
-    print(f"🚀 Start symulatora dla {len(MACHINES)} maszyn...")
-    print("Wciśnij Ctrl+C aby zatrzymać wszystkie.")
-
+    print("🚀 Uruchamianie Stabilnego Symulatora...")
     threads = []
-    
-    # Tworzenie i startowanie wątków
     for m_id in MACHINES:
         sim = MachineSimulator(m_id)
-        sim.daemon = True # Wątki zakończą się, gdy zamkniemy główny proces
+        sim.daemon = True
         sim.start()
         threads.append(sim)
-        time.sleep(0.5) # Krótka przerwa przy rozruchu
+        time.sleep(0.5)
 
     try:
-        while True:
-            time.sleep(1) # Główny proces tylko czuwa
+        while True: time.sleep(1)
     except KeyboardInterrupt:
-        print("\n🛑 Zatrzymywanie symulacji...")
+        print("\n🛑 Zatrzymano.")

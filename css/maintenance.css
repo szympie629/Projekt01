@@ -332,3 +332,93 @@ body {
 .maintenance-table td[style*="monospace"] {
     color: #e685b5 !important; /* Jaśniejszy różowy dla lepszego kontrastu */
 }
+
+/* === STYLE ZAKŁADKI: LOGI (FILTRY) === */
+
+.filters-container {
+    display: flex;
+    gap: 20px;
+    background-color: #495057; /* Tło paska filtrów */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    align-items: center; /* Wyrównanie do dołu, żeby przycisk był równo z polami */
+    flex-wrap: wrap; /* Żeby na telefonie spadały pod spód */
+    border: 1px solid #6c757d;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 0.85em;
+    color: #adb5bd;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Ciemne pola formularza (Select/Input) */
+.dark-input {
+    background-color: #343a40; /* Ciemne tło wewnątrz pola */
+    color: white;
+    border: 1px solid #6c757d;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 0.95em;
+    outline: none;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.dark-input:focus {
+    border-color: #ffc107; /* Żółta ramka po kliknięciu */
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+}
+
+/* Stylowanie scrollbara w tabeli (dla Webkit/Chrome) */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* === STYLE ZAKŁADKI: ANALIZA (WYKRESY) === */
+
+.charts-wrapper {
+    display: grid;
+    /* Dwie kolumny na dużym ekranie */
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Responsywność: Na tabletach/telefonach jedna kolumna */
+@media (max-width: 900px) {
+    .charts-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-box {
+    background-color: #495057; /* Tło kontenera wykresu */
+    border: 1px solid #6c757d;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.chart-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #adb5bd;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.canvas-container {
+    position: relative;
+    height: 300px; /* Stała wysokość wykresu */
+    width: 100%;
+}

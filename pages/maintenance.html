@@ -10,6 +10,8 @@
     
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -141,18 +143,100 @@
         </div>
 
         <div id="tab-logs" class="tab-content" style="display: none;">
-            <h3>Widok: Dziennik Zdarzeń</h3>
-            <p>Tutaj będzie tabela logów.</p>
+            <h2 class="section-title">Dziennik Historii Maszyn</h2>
+
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label>Maszyna:</label>
+                    <select id="filter-machine" class="dark-input">
+                        <option value="ALL">Wszystkie</option>
+                        <option value="CNC-01">CNC-01</option>
+                        <option value="CNC-02">CNC-02</option>
+                        <option value="CNC-03">CNC-03</option>
+                        <option value="CNC-04">CNC-04</option>
+                        <option value="CNC-05">CNC-05</option>
+                        <option value="CNC-06">CNC-06</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="filter-status" class="dark-input">
+                        <option value="ALL">Wszystkie</option>
+                        <option value="AWARIA">Tylko AWARIE</option>
+                        <option value="NAPRAWA">Tylko NAPRAWY</option>
+                        <option value="PRODUKCJA">Tylko PRODUKCJA</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Pokaż:</label>
+                    <select id="filter-limit" class="dark-input">
+                        <option value="50">Ostatnie 50</option>
+                        <option value="100">Ostatnie 100</option>
+                        <option value="500">Ostatnie 500</option>
+                    </select>
+                </div>
+
+                <button class="action-btn" onclick="fetchLogsHistory()" style="margin-top: 24px;">
+                    <i class="ph ph-magnifying-glass"></i> Szukaj
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="maintenance-table">
+                    <thead>
+                        <tr>
+                            <th>Data i Czas</th>
+                            <th>Maszyna</th>
+                            <th>Status</th>
+                            <th>Kod Błędu</th>
+                            <th>Sztuki / Braki</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 30px; color: #adb5bd;">
+                                <i class="ph ph-arrow-up" style="font-size: 1.5em; vertical-align: middle;"></i>
+                                Użyj filtrów powyżej, aby pobrać dane.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="tab-charts" class="tab-content" style="display: none;">
-            <h3>Widok: Wykresy</h3>
-            <p>Tutaj będą wykresy Chart.js.</p>
+            <h2 class="section-title">Analityka Utrzymania Ruchu</h2>
+            
+            <div class="charts-wrapper">
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Top Przyczyny Awarii</h3>
+                    <div class="canvas-container">
+                        <canvas id="chart-errors"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3 class="chart-title">Całkowita Produkcja Dzisiaj</h3>
+                    <div class="canvas-container">
+                        <canvas id="chart-production"></canvas>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <div id="tab-controls" class="tab-content" style="display: none;">
-            <h3>Widok: Sterowanie</h3>
-            <p>Tutaj będą przyciski sterujące.</p>
+            <h2 class="section-title">Centrum Reagowania</h2>
+            <p style="color: #adb5bd; margin-bottom: 20px;">
+                Zarządzaj statusem maszyn. Pamiętaj: Zmiana statusu wpływa na liczniki OEE.
+            </p>
+
+            <div id="control-grid" class="charts-wrapper" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                <p>Ładowanie panelu sterowania...</p>
+            </div>
         </div>
     </main>
 

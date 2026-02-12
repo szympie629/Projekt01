@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administratora</title>
+    <title>Panel Administratora | SynchroLab</title>
 
     <link rel="stylesheet" href="../css/shared.css">
     <link rel="stylesheet" href="../css/admin.css">
     
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -20,44 +21,94 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <h1>🛡️ Panel Administratora</h1>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="ph ph-nut"></i></div>
+            <span class="logo-text">SynchroLab</span>
+            <div class="toggle-btn" id="sidebar-toggle"><i class="ph ph-caret-left"></i></div>
         </div>
-        <button class="logout-btn" onclick="window.location.href='../index.html'">
-            Wyloguj
-        </button>
+
+        <ul class="menu-items">
+            <li class="active">
+                <a href="#">
+                    <i class="ph ph-users"></i>
+                    <span class="text">Użytkownicy</span>
+                </a>
+            </li>
+
+            <li class="user-profile">
+                <div class="profile-wrapper">
+                    <i class="ph ph-user-circle"></i>
+                    <div class="user-info-text">
+                        <span class="name" id="sidebar-user-name">Admin</span>
+                        <span class="role-badge">Administrator</span>
+                    </div>
+                </div>
+            </li>
+
+            <li class="logout-item" onclick="window.location.href='../index.html'">
+                <a href="#">
+                    <i class="ph ph-sign-out"></i>
+                    <span class="text">Wyloguj</span>
+                </a>
+            </li>
+        </ul>
     </nav>
 
-    <div class="admin-container">
-        <h2 class="admin-header">Zarządzanie Użytkownikami</h2>
+    <main class="main-content" id="main-content">
+        <h2 class="page-header">Zarządzanie Użytkownikami i Rolami</h2>
         
-        <table class="users-table">
-            <thead>
-                <tr>
-                    <th>Login</th>
-                    <th>Imię i Nazwisko</th>
-                    <th>Email</th>
-                    <th style="width: 150px;">Rola</th>
-                    <th style="width: 100px;">Akcja</th>
-                </tr>
-            </thead>
-            <tbody id="users-table-body">
-                <tr>
-                    <td colspan="5" style="text-align: center;">Ładowanie danych...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="admin-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Login</th>
+                        <th>Imię i Nazwisko</th>
+                        <th>Email</th>
+                        <th style="width: 200px;">Rola</th>
+                        <th style="width: 100px;">Akcja</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #adb5bd;">
+                            <i class="ph ph-spinner ph-spin" style="font-size: 1.5em; vertical-align: middle;"></i> 
+                            Ładowanie bazy użytkowników...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 
     <script src="../js/core/config.js"></script>
     <script src="../js/modules/admin.js"></script> 
 
     <script>
-        // Start logiki po załadowaniu DOM
+        // 1. Wyświetlenie nazwy
+        document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Administrator';
+
+        // 2. Start logiki admina
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.initAdminPanel === 'function') {
                 window.initAdminPanel();
+            }
+        });
+
+        // 3. Obsługa zwijania paska (Standardowa logika SynchroLab)
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
+            } else {
+                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
             }
         });
     </script>

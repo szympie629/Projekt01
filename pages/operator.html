@@ -3,32 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Operatora | HMI</title>
+    <title>Operator HMI | Micro-MES</title>
 
     <link rel="stylesheet" href="../css/shared.css">
     <link rel="stylesheet" href="../css/operator-hmi.css">
     
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <h1>🏭 Micro-MES | Hala Produkcyjna</h1>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="ph ph-nut"></i></div> <span class="logo-text">SynchroLab</span>
+            <div class="toggle-btn" id="sidebar-toggle"><i class="ph ph-caret-left"></i></div>
         </div>
-        <button class="logout-btn" onclick="window.location.href='../index.html'">
-            Wyloguj
-        </button>
+
+        <ul class="menu-items">
+            <li class="active">
+                <a href="#">
+                    <i class="ph ph-monitor"></i>
+                    <span class="text">Pulpit Maszyn</span>
+                </a>
+            </li>
+
+            <li class="user-profile">
+                <div class="profile-wrapper">
+                    <i class="ph ph-user-circle"></i>
+                    <div class="user-info-text">
+                        <span class="name" id="sidebar-user-name">--</span>
+                        <span class="role-badge">Operator</span>
+                    </div>
+                </div>
+            </li>
+
+            <li class="logout-item" onclick="window.location.href='../index.html'">
+                <a href="#">
+                    <i class="ph ph-sign-out"></i>
+                    <span class="text">Wyloguj</span>
+                </a>
+            </li>
+        </ul>
     </nav>
 
-    <div id="machines-grid">
-        <p style="text-align: center; width: 100%; color: #666;">Ładowanie podglądu hali...</p>
-    </div>
+    <main class="main-content" id="main-content">
+        <h2 class="page-header">Podgląd Czasu Rzeczywistego</h2>
+
+        <div id="machines-grid">
+            <p style="text-align: center; color: #adb5bd; width: 100%;">
+                <i class="ph ph-spinner ph-spin" style="font-size: 2em;"></i><br>
+                Łączenie z maszynami...
+            </p>
+        </div>
+    </main>
 
     <script src="../js/core/config.js"></script>
     <script src="../js/modules/operator.js"></script>
 
     <script>
+        // 1. Wpisanie nazwy użytkownika
+        document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Operator';
+
+        // 2. Obsługa zwijania paska (Skopiowana logika standardowa)
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            // Logika ikony i pozycji przycisku jest w CSS, tu tylko klasa
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
+            } else {
+                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
+            }
+        });
+
+        // 3. Start logiki operatora
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.startOperatorLogic === 'function') {
                 window.startOperatorLogic();

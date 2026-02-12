@@ -97,6 +97,7 @@ async function fetchMachineData() {
             if (machineData.status === 'PRODUKCJA') statusEl.classList.add('status-produkcja');
             else if (machineData.status === 'AWARIA') statusEl.classList.add('status-awaria');
             else if (machineData.status === 'NAPRAWA') statusEl.classList.add('status-naprawa');
+            else if (machineData.status === 'WYŁĄCZONA') statusEl.classList.add('status-postoj'); // Nowy status
             else statusEl.classList.add('status-offline');
 
         } else {

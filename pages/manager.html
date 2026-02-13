@@ -13,7 +13,6 @@
 
     <script>
         const role = sessionStorage.getItem('user_role');
-        // Dostęp mają Manager oraz Admin
         const allowedRoles = ['manager', 'admin'];
         if (!allowedRoles.includes(role)) {
             alert("⛔ Brak uprawnień do Panelu Zarządzania!");
@@ -33,7 +32,8 @@
         <ul class="menu-items">
             <li class="active">
                 <a href="#">
-                    <i class="ph ph-chart-bar"></i> <span class="text">Dashboard</span>
+                    <i class="ph ph-chart-bar"></i>
+                    <span class="text">Dashboard</span>
                 </a>
             </li>
 
@@ -64,7 +64,7 @@
     </nav>
 
     <main class="main-content" id="main-content">
-        <h2 class="page-header">Pulpit Zarządczy (Biuro)</h2>
+        <h2 class="page-header">Pulpit Zarządczy</h2>
 
         <div class="manager-kpi-container">
             <div class="kpi-card-blue">
@@ -95,7 +95,7 @@
         <div class="charts-placeholder-section">
             <p style="color: #6c757d; text-align: center; margin-top: 50px;">
                 <i class="ph ph-chart-line-up" style="font-size: 3em;"></i><br>
-                Tu pojawią się wykresy analityczne (Zadanie #3)
+                Tu pojawią się wykresy analityczne.
             </p>
         </div>
 
@@ -104,10 +104,8 @@
     <script src="../js/core/config.js"></script>
     
     <script>
-        // 1. Nazwa użytkownika
         document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Kierownik';
 
-        // 2. Obsługa Sidebara (Standard SynchroLab)
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('main-content');
         const toggleBtn = document.getElementById('sidebar-toggle');

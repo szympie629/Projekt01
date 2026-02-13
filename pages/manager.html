@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Managera | SynchroLab</title>
+
+    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/manager.css">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const role = sessionStorage.getItem('user_role');
+        // Dostęp mają Manager oraz Admin
+        const allowedRoles = ['manager', 'admin'];
+        if (!allowedRoles.includes(role)) {
+            alert("⛔ Brak uprawnień do Panelu Zarządzania!");
+            window.location.href = '../index.html';
+        }
+    </script>
+</head>
+<body>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="ph ph-nut"></i></div>
+            <span class="logo-text">SynchroLab</span>
+            <div class="toggle-btn" id="sidebar-toggle"><i class="ph ph-caret-left"></i></div>
+        </div>
+
+        <ul class="menu-items">
+            <li class="active">
+                <a href="#">
+                    <i class="ph ph-chart-bar"></i> <span class="text">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="ph ph-file-csv"></i>
+                    <span class="text">Raporty</span>
+                </a>
+            </li>
+
+            <li class="user-profile">
+                <div class="profile-wrapper">
+                    <i class="ph ph-user-circle"></i>
+                    <div class="user-info-text">
+                        <span class="name" id="sidebar-user-name">--</span>
+                        <span class="role-badge">Manager</span>
+                    </div>
+                </div>
+            </li>
+
+            <li class="logout-item" onclick="window.location.href='../index.html'">
+                <a href="#">
+                    <i class="ph ph-sign-out"></i>
+                    <span class="text">Wyloguj</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content" id="main-content">
+        <h2 class="page-header">Pulpit Zarządczy (Biuro)</h2>
+
+        <div class="manager-kpi-container">
+            <div class="kpi-card-blue">
+                <div class="kpi-icon"><i class="ph ph-gauge"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-oee">--%</span>
+                    <span class="kpi-label">OEE Globalne</span>
+                </div>
+            </div>
+
+            <div class="kpi-card-green">
+                <div class="kpi-icon"><i class="ph ph-package"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-volume">0</span>
+                    <span class="kpi-label">Dzisiejsza Produkcja</span>
+                </div>
+            </div>
+
+            <div class="kpi-card-purple">
+                <div class="kpi-icon"><i class="ph ph-shield-check"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-quality">--%</span>
+                    <span class="kpi-label">Wskaźnik Jakości</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-placeholder-section">
+            <p style="color: #6c757d; text-align: center; margin-top: 50px;">
+                <i class="ph ph-chart-line-up" style="font-size: 3em;"></i><br>
+                Tu pojawią się wykresy analityczne (Zadanie #3)
+            </p>
+        </div>
+
+    </main>
+
+    <script src="../js/core/config.js"></script>
+    
+    <script>
+        // 1. Nazwa użytkownika
+        document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Kierownik';
+
+        // 2. Obsługa Sidebara (Standard SynchroLab)
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
+            } else {
+                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
+            }
+        });
+    </script>
+</body>
+</html>

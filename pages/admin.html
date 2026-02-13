@@ -21,39 +21,7 @@
 </head>
 <body>
 
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon"><i class="ph ph-nut"></i></div>
-            <span class="logo-text">SynchroLab</span>
-            <div class="toggle-btn" id="sidebar-toggle"><i class="ph ph-caret-left"></i></div>
-        </div>
-
-        <ul class="menu-items">
-            <li class="active">
-                <a href="#">
-                    <i class="ph ph-users"></i>
-                    <span class="text">Użytkownicy</span>
-                </a>
-            </li>
-
-            <li class="user-profile">
-                <div class="profile-wrapper">
-                    <i class="ph ph-user-circle"></i>
-                    <div class="user-info-text">
-                        <span class="name" id="sidebar-user-name">Admin</span>
-                        <span class="role-badge">Administrator</span>
-                    </div>
-                </div>
-            </li>
-
-            <li class="logout-item" onclick="window.location.href='../index.html'">
-                <a href="#">
-                    <i class="ph ph-sign-out"></i>
-                    <span class="text">Wyloguj</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <nav class="sidebar" id="sidebar"></nav>
 
     <main class="main-content" id="main-content">
         <h2 class="page-header">Zarządzanie Użytkownikami i Rolami</h2>
@@ -94,24 +62,7 @@
                 window.initAdminPanel();
             }
         });
-
-        // 3. Obsługa zwijania paska (Standardowa logika SynchroLab)
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleBtn = document.getElementById('sidebar-toggle');
-        const toggleIcon = toggleBtn.querySelector('i');
-
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-            
-            if (sidebar.classList.contains('collapsed')) {
-                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
-            } else {
-                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
-            }
-        });
     </script>
-
+    <script src="../js/core/sidebar.js"></script>
 </body>
 </html>

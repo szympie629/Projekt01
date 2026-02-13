@@ -1,0 +1,25 @@
+name: SynchroLab Industrial Simulator
+
+on:
+  schedule:
+    # Uruchomienie co 30 minut (o pełnej godzinie i wpół do)
+    - cron: '0,30 * * * *'
+  workflow_dispatch: # Przycisk do ręcznego testu
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install supabase
+
+      - name: Run simulation batch
+        run: python scripts/simulator.py

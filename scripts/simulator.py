@@ -1,6 +1,6 @@
 import time
 import random
-import threading
+from datetime import datetime, timedelta
 from supabase import create_client
 
 # Konfiguracja Supabase
@@ -9,98 +9,50 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 MACHINES = ["CNC-01", "CNC-02", "CNC-03", "CNC-04", "CNC-05", "CNC-06"]
 
-class MachineSimulator(threading.Thread):
-    def __init__(self, machine_id):
-        super().__init__()
-        self.machine_id = machine_id
-        self.pieces = 0
-        self.scrap = 0
-        self.status = "PRODUKCJA" 
-        self.running = True
-        
-        # POPRAWKA: Każdy wątek ma SWOJEGO WŁASNEGO klienta.
-        # Dzięki temu awaria połączenia w jednym wątku nie zabija innych.
-        self.db_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+def run_batch_simulation():
+    db_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print(f"🚀 Start wsadowej symulacji: {datetime.now().strftime('%H:%M:%S')}")
 
-    def sync_with_db(self):
-        """Pobiera ostatni znany stan maszyny z bazy."""
-        try:
-            # Używamy self.db_client zamiast globalnego supabase
-            response = self.db_client.table("machine_logs") \
-                .select("*") \
-                .eq("machine_id", self.machine_id) \
-                .order("created_at", desc=True) \
-                .limit(1) \
-                .execute()
-            
-            if response.data and len(response.data) > 0:
-                last_log = response.data[0]
-                self.status = last_log['status']
-                self.pieces = last_log['pieces_total']
-                self.scrap = last_log['scrap_total']
-                return True
-        except Exception as e:
-            # Wypisujemy błąd, ale nie przerywamy pętli
-            # print(f"⚠️ {self.machine_id}: Sync error (to normalne przy starcie): {e}")
-            return False
+    # Symulujemy ostatnie 30 minut (np. 10 wpisów na każdą maszynę co 3 minuty)
+    steps = 10 
+    time_gap = 3 # minuty między wpisami
+    
+    for step in range(steps):
+        # Obliczamy wsteczną datę dla tego konkretnego kroku
+        # Krok 0 to 30 min temu, krok 9 to "teraz"
+        minutes_ago = (steps - step - 1) * time_gap
+        simulated_time = (datetime.utcnow() - timedelta(minutes=minutes_ago)).isoformat()
 
-    def run(self):
-        print(f"🟢 {self.machine_id}: Start symulacji...")
-        
-        while self.running:
-            # 1. SYNCHRONIZACJA
-            self.sync_with_db()
-
-            current_error_code = None
-
-            # 2. LOGIKA
-            if self.status == "PRODUKCJA":
-                self.pieces += 1
-                if random.random() < 0.05: self.scrap += 1
-                
-                if random.random() < 0.02:
-                    self.status = "AWARIA"
-                    current_error_code = random.choice(["E-STOP", "PRZEGRZANIE", "BRAK MATERIAŁU"])
-                    print(f"🔥 {self.machine_id}: AWARIA ({current_error_code})!")
-
-            elif self.status == "AWARIA":
-                current_error_code = "WYMAGA SERWISU"
-
-            elif self.status == "NAPRAWA":
-                current_error_code = "SERWIS W TOKU"
-                
-            elif self.status == "WYLACZONA":
-                current_error_code = "POSTÓJ PLANOWANY"
-
-            # 3. WYSYŁKA
-            data = {
-                "machine_id": self.machine_id,
-                "status": self.status,
-                "pieces_total": self.pieces,
-                "scrap_total": self.scrap,
-                "error_code": current_error_code
-            }
-
+        for m_id in MACHINES:
+            # 1. Pobieramy ostatni stan, żeby nie zaczynać od zera sztuk
             try:
-                # Używamy self.db_client
-                self.db_client.table("machine_logs").insert(data).execute()
-            except Exception as e:
-                # Jeśli zerwie połączenie, po prostu spróbujemy za 3 sekundy, nie panikujemy.
-                print(f"⚠️ {self.machine_id}: Nie udało się wysłać logu (reconnecting...)")
+                res = db_client.table("machine_logs").select("*").eq("machine_id", m_id).order("created_at", desc=True).limit(1).execute()
+                last_log = res.data[0] if res.data else {"pieces_total": 0, "scrap_total": 0, "status": "PRODUKCJA"}
+                
+                pieces = last_log['pieces_total'] + random.randint(5, 15) # Przyrost produkcji
+                scrap = last_log['scrap_total'] + (1 if random.random() < 0.1 else 0)
+                status = random.choices(["PRODUKCJA", "AWARIA", "NAPRAWA"], weights=[80, 10, 10])[0]
+                
+                error_code = None
+                if status == "AWARIA": error_code = random.choice(["OVERHEAT", "E-STOP", "FEED_ERR"])
 
-            time.sleep(random.uniform(3.0, 6.0))
+                # 2. Wysyłamy wpis z WYGENEROWANĄ DATĄ
+                data = {
+                    "machine_id": m_id,
+                    "status": status,
+                    "pieces_total": pieces,
+                    "scrap_total": scrap,
+                    "error_code": error_code,
+                    "created_at": simulated_time # KLUCZOWE: Nadpisujemy systemowe now()
+                }
+                
+                db_client.table("machine_logs").insert(data).execute()
+                print(f"✅ {m_id} | {status} | T: {simulated_time}")
+                
+            except Exception as e:
+                print(f"❌ Błąd dla {m_id}: {e}")
+
+    print("🏁 Symulacja zakończona pomyślnie.")
 
 if __name__ == "__main__":
-    print("🚀 Uruchamianie Stabilnego Symulatora...")
-    threads = []
-    for m_id in MACHINES:
-        sim = MachineSimulator(m_id)
-        sim.daemon = True
-        sim.start()
-        threads.append(sim)
-        time.sleep(0.5)
-
-    try:
-        while True: time.sleep(1)
-    except KeyboardInterrupt:
-        print("\n🛑 Zatrzymano.")
+    run_batch_simulation()

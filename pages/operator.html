@@ -13,38 +13,7 @@
 </head>
 <body>
 
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon"><i class="ph ph-nut"></i></div> <span class="logo-text">SynchroLab</span>
-            <div class="toggle-btn" id="sidebar-toggle"><i class="ph ph-caret-left"></i></div>
-        </div>
-
-        <ul class="menu-items">
-            <li class="active">
-                <a href="#">
-                    <i class="ph ph-monitor"></i>
-                    <span class="text">Pulpit Maszyn</span>
-                </a>
-            </li>
-
-            <li class="user-profile">
-                <div class="profile-wrapper">
-                    <i class="ph ph-user-circle"></i>
-                    <div class="user-info-text">
-                        <span class="name" id="sidebar-user-name">--</span>
-                        <span class="role-badge">Operator</span>
-                    </div>
-                </div>
-            </li>
-
-            <li class="logout-item" onclick="window.location.href='../index.html'">
-                <a href="#">
-                    <i class="ph ph-sign-out"></i>
-                    <span class="text">Wyloguj</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <nav class="sidebar" id="sidebar"></nav>
 
     <main class="main-content" id="main-content">
         <h2 class="page-header">Podgląd Czasu Rzeczywistego</h2>
@@ -61,34 +30,13 @@
     <script src="../js/modules/operator.js"></script>
 
     <script>
-        // 1. Wpisanie nazwy użytkownika
-        document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Operator';
-
-        // 2. Obsługa zwijania paska (Skopiowana logika standardowa)
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleBtn = document.getElementById('sidebar-toggle');
-        const toggleIcon = toggleBtn.querySelector('i');
-
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-            
-            // Logika ikony i pozycji przycisku jest w CSS, tu tylko klasa
-            if (sidebar.classList.contains('collapsed')) {
-                toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
-            } else {
-                toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
-            }
-        });
-
-        // 3. Start logiki operatora
+        // Start logiki operatora
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.startOperatorLogic === 'function') {
                 window.startOperatorLogic();
             }
         });
     </script>
-
+    <script src="../js/core/sidebar.js"></script>
 </body>
 </html>

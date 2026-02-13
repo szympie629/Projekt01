@@ -14,7 +14,7 @@ body {
     background-color: #212529; color: #ecf0f1; transition: width 0.3s ease;
     z-index: 1000; display: flex; flex-direction: column;
     box-shadow: 4px 0 10px rgba(0,0,0,0.2); white-space: nowrap;
-    overflow-x: hidden; /* Fix na migający tekst */
+    /* USUNIĘTO overflow-x: hidden, aby przycisk mógł wystawać */
 }
 
 .sidebar.collapsed { width: 80px; }
@@ -32,26 +32,38 @@ body {
     display: flex; align-items: center; padding: 0 25px;
     background-color: #1a1d20; height: 70px; position: relative;
     box-sizing: border-box;
+    /* Nie dajemy tu overflow:hidden, bo utnie przycisk */
 }
 .logo-icon {
     font-size: 28px; color: #ffc107; min-width: 30px; margin-right: 15px;
     display: flex; align-items: center; justify-content: center;
 }
-.logo-text { font-size: 1.2em; font-weight: bold; letter-spacing: 1px; }
+.logo-text { 
+    font-size: 1.2em; font-weight: bold; letter-spacing: 1px; 
+    /* Zabezpieczenie, żeby tekst logo nie wyjechał */
+    overflow: hidden; text-overflow: ellipsis; 
+}
 
-/* Przycisk toggle */
+/* Przycisk toggle - POPRAWIONY */
 .toggle-btn {
     position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
     background-color: #ffc107; color: #212529; width: 24px; height: 24px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 2px solid #212529; transition: all 0.3s; z-index: 100;
+    cursor: pointer; border: 2px solid #212529; transition: all 0.3s; 
+    z-index: 2000; /* Bardzo wysoki Z-Index */
 }
-.sidebar.collapsed .toggle-btn { right: 0; transform: translate(50%, -50%); }
 
-/* Menu */
+/* Gdy pasek jest zwinięty, przycisk wystaje na zewnątrz */
+.sidebar.collapsed .toggle-btn { 
+    right: 0; 
+    transform: translate(50%, -50%); /* Przesuwa połowę przycisku poza pasek */
+}
+
+/* Menu - TU DAJEMY UCNIANIE TEKSTU */
 .menu-items {
     list-style: none; padding: 20px 0; margin: 0; flex-grow: 1;
     display: flex; flex-direction: column;
+    overflow-x: hidden; /* Fix na migający tekst w menu */
 }
 .menu-items li { margin-bottom: 5px; }
 .menu-items li a {
@@ -63,11 +75,12 @@ body {
 .menu-items li:hover a { background-color: #343a40; color: white; }
 .menu-items li.active a { background-color: #343a40; color: white; border-left-color: #ffc107; }
 
-/* Profil */
+/* Profil - TU TEŻ UCINAMY */
 .user-profile { margin-top: auto; padding: 10px 0; }
 .profile-wrapper { 
     display: flex; align-items: center; padding: 10px 25px; color: #ecf0f1; 
-    height: 50px; box-sizing: border-box; overflow: hidden;
+    height: 50px; box-sizing: border-box; 
+    overflow-x: hidden; /* Fix na migający tekst w profilu */
 }
 .profile-wrapper i { font-size: 32px !important; color: #adb5bd; min-width: 30px; margin-right: 15px; display: flex; justify-content: center; }
 .user-info-text { display: flex; flex-direction: column; justify-content: center; white-space: nowrap; }

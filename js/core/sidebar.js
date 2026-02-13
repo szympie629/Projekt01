@@ -145,3 +145,35 @@ window.handleLogout = function() {
         window.location.href = '../index.html';
     }
 };
+
+// === GLOBALNA OBSŁUGA ZAKŁADEK (TABS) ===
+window.switchTab = function(tabId, linkElement) {
+    // 1. Ukryj wszystkie kontenery z klasą .tab-content
+    // (Zakładamy, że każda sekcja-zakładka ma klasę "tab-content")
+    const allTabs = document.querySelectorAll('.tab-content');
+    allTabs.forEach(tab => {
+        tab.style.display = 'none';
+    });
+
+    // 2. Pokaż wybraną sekcję
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) {
+        targetTab.style.display = 'block';
+    } else {
+        console.warn(`Nie znaleziono zakładki o ID: ${tabId}`);
+    }
+
+    // 3. Zaktualizuj aktywną klasę w menu (jeśli kliknięto w sidebar)
+    if (linkElement) {
+        // Usuń .active ze wszystkich elementów listy
+        document.querySelectorAll('.menu-items li').forEach(li => {
+            li.classList.remove('active');
+        });
+
+        // Dodaj .active do rodzica klikniętego linku (czyli do <li>)
+        // Sprawdzamy czy to element DOM, czy np. tylko selector
+        if (linkElement.parentNode) {
+            linkElement.parentNode.classList.add('active');
+        }
+    }
+};

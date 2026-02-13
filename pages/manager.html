@@ -19,6 +19,7 @@
             window.location.href = '../index.html';
         }
     </script>
+    
 </head>
 <body>
 
@@ -102,10 +103,9 @@
     </main>
 
     <script src="../js/core/config.js"></script>
-    
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script src="../js/modules/manager.js"></script> <script>
+        // Obsługa Sidebara (Bez zmian)
         document.getElementById('sidebar-user-name').innerText = sessionStorage.getItem('user_name') || 'Kierownik';
-
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('main-content');
         const toggleBtn = document.getElementById('sidebar-toggle');
@@ -114,13 +114,20 @@
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
-            
             if (sidebar.classList.contains('collapsed')) {
                 toggleIcon.classList.replace('ph-caret-left', 'ph-caret-right');
             } else {
                 toggleIcon.classList.replace('ph-caret-right', 'ph-caret-left');
             }
         });
+
+        // Start Logiki (gdy strona się załaduje)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.initManagerDashboard) {
+                window.initManagerDashboard();
+            }
+        });
     </script>
 </body>
 </html>
+

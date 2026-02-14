@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Managera | SynchroLab</title>
+
+    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/manager.css">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const role = sessionStorage.getItem('user_role');
+        const allowedRoles = ['manager', 'admin'];
+        if (!allowedRoles.includes(role)) {
+            alert("⛔ Brak uprawnień do Panelu Zarządzania!");
+            window.location.href = '../index.html';
+        }
+    </script>
+    
+</head>
+<body>
+
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="main-content" id="main-content">
+        <h2 class="page-header">Pulpit Zarządczy</h2>
+
+        <div class="manager-kpi-container">
+            <div class="kpi-card-blue">
+                <div class="kpi-icon"><i class="ph ph-gauge"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-oee">--%</span>
+                    <span class="kpi-label">OEE Globalne</span>
+                </div>
+            </div>
+
+            <div class="kpi-card-green">
+                <div class="kpi-icon"><i class="ph ph-package"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-volume">0</span>
+                    <span class="kpi-label">Dzisiejsza Produkcja</span>
+                </div>
+            </div>
+
+            <div class="kpi-card-purple">
+                <div class="kpi-icon"><i class="ph ph-shield-check"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value" id="kpi-quality">--%</span>
+                    <span class="kpi-label">Wskaźnik Jakości</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-placeholder-section">
+            <p style="color: #6c757d; text-align: center; margin-top: 50px;">
+                <i class="ph ph-chart-line-up" style="font-size: 3em;"></i><br>
+                Tu pojawią się wykresy analityczne.
+            </p>
+        </div>
+
+    </main>
+
+    <script src="../js/core/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script src="../js/modules/manager.js"></script> <script>
+        // Start Logiki (gdy strona się załaduje)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.initManagerDashboard) {
+                window.initManagerDashboard();
+            }
+        });
+    </script>
+    <script src="../js/core/sidebar.js"></script>
+</body>
+</html>
+
+
